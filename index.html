@@ -8,6 +8,28 @@
 <meta name="apple-mobile-web-app-title" content="Mes Tâches"/>
 <title>Mes Tâches</title>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDuUav0AdTD9NxRxZBUvm6MD8KZxYRAkj8",
+  authDomain: "mes-taches-d7d9c.firebaseapp.com",
+  databaseURL: "https://mes-taches-d7d9c-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "mes-taches-d7d9c",
+  storageBucket: "mes-taches-d7d9c.firebasestorage.app",
+  messagingSenderId: "267859173191",
+  appId: "1:267859173191:web:5dd47e2fb8d71a27217662",
+  measurementId: "G-DVGTVR94XF"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+window._fb = { db, ref, set, onValue, remove, update };
+window._fbReady = true;
+window.dispatchEvent(new Event('fbready'));
+</script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
   :root {
@@ -28,22 +50,24 @@
   body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:40px}
   .app{max-width:440px;margin:0 auto;padding:0 16px}
 
-  /* HEADER */
   .header{padding:28px 0 20px;display:flex;align-items:center;justify-content:space-between}
   .header-left h1{font-size:26px;font-weight:600;letter-spacing:-.5px;color:var(--text)}
   .header-left p{font-size:13px;color:var(--text3);margin-top:2px}
-  .header-right{display:flex;gap:8px}
+  .header-right{display:flex;gap:8px;align-items:center}
   .hbtn{width:42px;height:42px;background:var(--text);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:opacity .15s;border:none}
   .hbtn:hover{opacity:.85}
   .hbtn svg{width:20px;height:20px;stroke:white;fill:none;stroke-width:2}
+  .sync-dot{width:10px;height:10px;border-radius:50%;background:#aaa;transition:background .3s}
+  .sync-dot.ok{background:var(--green)}
+  .sync-dot.err{background:var(--red)}
+  .sync-dot.loading{background:var(--orange);animation:blink 1s infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
-  /* STATS */
   .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
   .stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center;box-shadow:var(--shadow)}
   .stat-num{font-size:24px;font-weight:600;font-family:'DM Mono',monospace;color:var(--text)}
   .stat-label{font-size:11px;color:var(--text3);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
 
-  /* CARD */
   .add-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px;box-shadow:var(--shadow)}
   .add-card h3{font-size:13px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
   .field-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:10px}
@@ -52,7 +76,6 @@
   .field-input::placeholder{color:var(--text3)}
   textarea.field-input{resize:none;line-height:1.5}
 
-  /* EMAIL SELECTOR */
   .email-selector{margin-bottom:10px}
   .esec-label{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:flex;align-items:center;gap:5px}
   .esec-label svg{width:12px;height:12px;stroke:var(--text3);fill:none;stroke-width:2}
@@ -72,7 +95,6 @@
   .eon{font-size:13px;font-weight:500;color:var(--text)}
   .eoa{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-  /* MIC */
   .btn-mic{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;box-shadow:var(--shadow)}
   .btn-mic:hover{background:var(--card2);border-color:var(--border2)}
   .btn-mic.active{background:#FFF0F0;border-color:var(--red);animation:pulse 1s infinite}
@@ -81,7 +103,6 @@
   @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(216,64,64,.3)}50%{box-shadow:0 0 0 6px rgba(216,64,64,0)}}
   .mic-hint{font-size:11px;color:var(--red);text-align:center;min-height:16px;margin:6px 0 0}
 
-  /* CHIPS */
   .status-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
   .chip{padding:5px 11px;border-radius:99px;border:1px solid var(--border);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--card2);color:var(--text2);transition:all .15s;font-weight:400}
   .chip.active-none {background:var(--card2);border-color:var(--border2);color:var(--text);font-weight:500}
@@ -93,12 +114,10 @@
   .btn-add{width:100%;padding:11px;border-radius:var(--radius-sm);border:none;background:var(--text);color:white;font-size:15px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;margin-top:12px;transition:opacity .15s,transform .1s}
   .btn-add:active{transform:scale(.98);opacity:.85}
 
-  /* FILTERS */
   .filters{display:flex;gap:6px;margin-bottom:14px}
   .filter-btn{flex:1;padding:8px 4px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--card);color:var(--text2);font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s;text-align:center;box-shadow:var(--shadow)}
   .filter-btn.active{background:var(--text);border-color:var(--text);color:white;font-weight:500}
 
-  /* TASK */
   .task-list{display:flex;flex-direction:column;gap:10px}
   .task-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);animation:fadeIn .2s ease;transition:opacity .2s}
   .task-card.done{opacity:.6}
@@ -120,7 +139,6 @@
   .icon-btn svg{width:14px;height:14px;stroke:var(--text2);fill:none;stroke-width:2}
   .icon-btn.del:hover svg{stroke:var(--red)}
 
-  /* PROGRESS */
   .progress-section{border-top:1px solid var(--border);padding:12px 14px;background:var(--card2)}
   .progress-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
   .progress-section-label{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
@@ -135,7 +153,6 @@
   .progress-bar-bg{background:var(--border);border-radius:99px;height:3px;overflow:hidden}
   .progress-bar-fill{height:3px;border-radius:99px;transition:width .5s ease}
 
-  /* EDIT */
   .edit-section{padding:14px;border-top:1px solid var(--border);background:var(--accent-light)}
   .edit-field-row{display:flex;gap:6px;align-items:flex-start;margin-bottom:8px}
   .edit-field-row .field-input{font-size:14px}
@@ -143,7 +160,6 @@
   .btn-cancel{padding:7px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:white;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--text2)}
   .btn-save{padding:7px 14px;border-radius:var(--radius-sm);border:none;background:var(--accent);font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;color:white;font-weight:500}
 
-  /* CONTACTS MODAL */
   .modal-overlay{position:fixed;inset:0;background:rgba(15,42,69,.45);z-index:100;display:flex;align-items:flex-end;justify-content:center;animation:fadeOv .2s}
   @keyframes fadeOv{from{opacity:0}to{opacity:1}}
   .modal{background:var(--card);border-radius:var(--radius) var(--radius) 0 0;width:100%;max-width:440px;padding:20px 16px 40px;animation:slideUp .25s ease;max-height:90vh;overflow-y:auto}
@@ -166,13 +182,15 @@
   .btn-add-contact:hover{background:var(--card2)}
   .btn-save-contacts{width:100%;padding:11px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:white;font-size:15px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;margin-top:14px}
 
-  /* TOAST */
   .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--text);color:white;padding:10px 20px;border-radius:99px;font-size:13px;font-weight:500;box-shadow:var(--shadow-md);transition:transform .3s ease,opacity .3s;opacity:0;pointer-events:none;white-space:nowrap;z-index:999}
   .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
   .toast.success{background:var(--green)}
   .toast.error{background:var(--red)}
   .empty-state{text-align:center;padding:40px 16px;color:var(--text3);font-size:14px}
   .empty-state svg{width:40px;height:40px;stroke:var(--border2);display:block;margin:0 auto 12px}
+  .loading-screen{text-align:center;padding:60px 16px;color:var(--text2);font-size:14px}
+  .loading-screen .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px}
+  @keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -180,9 +198,10 @@
   <div class="header">
     <div class="header-left">
       <h1>Mes tâches</h1>
-      <p>Parlez ou tapez pour gérer vos tâches</p>
+      <p>Synchronisé en temps réel ☁️</p>
     </div>
     <div class="header-right">
+      <div class="sync-dot loading" id="syncDot" title="Connexion..."></div>
       <button class="hbtn" id="btnOpenContacts" title="Gérer les contacts">
         <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
       </button>
@@ -235,7 +254,7 @@
     <button class="filter-btn" data-filter="todo">À faire</button>
     <button class="filter-btn" data-filter="done">Terminées</button>
   </div>
-  <div class="task-list" id="taskList"></div>
+  <div class="task-list" id="taskList"><div class="loading-screen"><div class="spinner"></div>Chargement depuis le cloud...</div></div>
 </div>
 
 <!-- MODAL CONTACTS -->
@@ -256,6 +275,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
+// ── CONFIG ────────────────────────────────────────────────────
 emailjs.init('HWFRZJI6wntv53fYS');
 const EJS_SERVICE='service_zkm7ii9', EJS_TEMPLATE='template_qbu1l7l';
 
@@ -267,130 +287,54 @@ const STATUS={
   done: {label:'Terminé',     badgeCls:'badge-done', chipCls:'active-done', bar:'#1A9E6E',pct:100},
 };
 
-// ── CONTACTS ──────────────────────────────────────────────────
+// ── STATE ─────────────────────────────────────────────────────
+let tasks=[];
 let contacts=JSON.parse(localStorage.getItem('contacts_v1')||'null')||[
-  {id:1,name:'Contact 1',email:''},
-  {id:2,name:'Contact 2',email:''},
-  {id:3,name:'Contact 3',email:''},
-  {id:4,name:'Contact 4',email:''},
-  {id:5,name:'Contact 5',email:''},
-  {id:6,name:'Contact 6',email:''},
+  {id:1,name:'Contact 1',email:''},{id:2,name:'Contact 2',email:''},
+  {id:3,name:'Contact 3',email:''},{id:4,name:'Contact 4',email:''},
+  {id:5,name:'Contact 5',email:''},{id:6,name:'Contact 6',email:''},
   {id:7,name:'Contact 7',email:''},
 ];
 let nextCid=contacts.reduce((m,c)=>Math.max(m,c.id),0)+1;
+let nextId=Date.now();
+let filter='all', editingId=null, newStatus='none', recognition=null;
+let selEmails=new Set();
+const editSelMap={};
+let fbDb=null, fbRef=null, fbSet=null, fbOnValue=null, fbRemove=null, fbUpdate=null;
+
 function saveContacts(){localStorage.setItem('contacts_v1',JSON.stringify(contacts));}
 function initials(n){return n.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2)||'?';}
 
-// ── SELECTED EMAILS (new task) ────────────────────────────────
-let selEmails=new Set();
+// ── FIREBASE INIT ─────────────────────────────────────────────
+function initFirebase(){
+  const {db,ref,set,onValue,remove,update}=window._fb;
+  fbDb=db; fbRef=ref; fbSet=set; fbOnValue=onValue; fbRemove=remove; fbUpdate=update;
 
-function renderEmailOptions(containerId, selSet, taskId){
-  const container=document.getElementById(containerId);
-  if(!container) return;
-  const valid=contacts.filter(c=>c.email.trim());
-  if(!valid.length){
-    container.innerHTML='<div style="font-size:12px;color:var(--text3);padding:6px 0">Aucun contact — cliquez sur 👥 pour en ajouter.</div>';
-    return;
-  }
-  const allSel=selSet.has('all');
-  let html=`<div class="email-opt all-opt${allSel?' sel':''}" data-eid="all" data-tid="${taskId||'new'}">
-    <div class="eochk"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
-    <div class="eoi"><div class="eon">📨 Envoyer à tous</div><div class="eoa">${valid.length} contact(s)</div></div>
-  </div>`;
-  valid.forEach(c=>{
-    const s=selSet.has(c.email)||allSel;
-    html+=`<div class="email-opt${s?' sel':''}" data-eid="${c.email}" data-tid="${taskId||'new'}">
-      <div class="eochk"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
-      <div class="eoi"><div class="eon">${c.name}</div><div class="eoa">${c.email}</div></div>
-    </div>`;
-  });
-  container.innerHTML=html;
-  container.querySelectorAll('.email-opt').forEach(opt=>{
-    opt.addEventListener('click',()=>{
-      const eid=opt.dataset.eid;
-      if(eid==='all'){
-        if(selSet.has('all')){selSet.clear();}else{selSet.clear();selSet.add('all');}
-      } else {
-        selSet.delete('all');
-        if(selSet.has(eid)) selSet.delete(eid); else selSet.add(eid);
-      }
-      renderEmailOptions(containerId,selSet,taskId);
-    });
-  });
+  setSyncDot('loading');
+
+  // Listen to tasks in real time
+  fbOnValue(fbRef(fbDb,'tasks'), snap=>{
+    const data=snap.val();
+    tasks = data ? Object.values(data).sort((a,b)=>b.date-a.date) : [];
+    nextId = tasks.reduce((m,t)=>Math.max(m,t.id),Date.now())+1;
+    setSyncDot('ok');
+    render();
+  }, err=>{ setSyncDot('err'); showToast('Erreur de connexion','error'); });
 }
 
-function resolveEmails(selSet){
-  const valid=contacts.filter(c=>c.email.trim());
-  if(selSet.has('all')) return valid.map(c=>c.email);
-  return [...selSet].filter(Boolean);
+function setSyncDot(state){
+  const d=document.getElementById('syncDot');
+  if(d){d.className='sync-dot '+state; d.title=state==='ok'?'Connecté ✓':state==='err'?'Erreur de connexion':'Connexion...';}
 }
 
-// ── CONTACTS MODAL ────────────────────────────────────────────
-function renderContactsModal(){
-  const list=document.getElementById('contactsList');
-  list.innerHTML=contacts.map(c=>`
-    <div class="contact-item" data-cid="${c.id}">
-      <div class="contact-avatar" id="av-${c.id}">${initials(c.name)}</div>
-      <div class="contact-info">
-        <input class="contact-name-inp" data-f="name" data-cid="${c.id}" value="${c.name}" placeholder="Nom"/>
-        <input class="contact-email-inp" data-f="email" data-cid="${c.id}" value="${c.email}" placeholder="adresse@email.com" type="email"/>
-      </div>
-      <button class="contact-del" data-del="${c.id}">
-        <svg viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6"/></svg>
-      </button>
-    </div>`).join('');
-  list.querySelectorAll('input[data-f]').forEach(inp=>{
-    inp.addEventListener('input',()=>{
-      const c=contacts.find(c=>c.id==inp.dataset.cid);
-      if(c){
-        c[inp.dataset.f]=inp.value;
-        if(inp.dataset.f==='name'){const av=document.getElementById('av-'+c.id);if(av) av.textContent=initials(inp.value);}
-      }
-    });
-  });
-  list.querySelectorAll('[data-del]').forEach(btn=>{
-    btn.addEventListener('click',()=>{
-      contacts=contacts.filter(c=>c.id!=btn.dataset.del);
-      renderContactsModal();
-    });
-  });
+function fbSaveTask(t){
+  if(!fbDb) return;
+  fbSet(fbRef(fbDb,'tasks/'+t.id), t);
 }
-document.getElementById('btnOpenContacts').addEventListener('click',()=>{
-  renderContactsModal();
-  document.getElementById('contactsModal').style.display='flex';
-});
-document.getElementById('btnCloseContacts').addEventListener('click',()=>{
-  document.getElementById('contactsModal').style.display='none';
-});
-document.getElementById('contactsModal').addEventListener('click',e=>{
-  if(e.target===document.getElementById('contactsModal'))
-    document.getElementById('contactsModal').style.display='none';
-});
-document.getElementById('btnAddContact').addEventListener('click',()=>{
-  contacts.push({id:nextCid++,name:'Nouveau contact',email:''});
-  renderContactsModal();
-});
-document.getElementById('btnSaveContacts').addEventListener('click',()=>{
-  saveContacts();
-  document.getElementById('contactsModal').style.display='none';
-  selEmails.clear();
-  renderEmailOptions('emailOptions',selEmails,'new');
-  render();
-  showToast('✓ Contacts enregistrés','success');
-});
-
-// ── STATE ─────────────────────────────────────────────────────
-let tasks=JSON.parse(localStorage.getItem('tasks_v3')||'[]');
-if(!tasks.length) tasks=[
-  {id:1,text:'Appeler le médecin',emails:[],progress:'Rendez-vous à fixer',status:'start',done:false,date:new Date().toISOString()},
-  {id:2,text:'Préparer la réunion',emails:[],progress:'Slides terminés',status:'done',done:true,date:new Date().toISOString()},
-];
-let nextId=tasks.reduce((m,t)=>Math.max(m,t.id),0)+1;
-let filter='all',editingId=null,newStatus='none',recognition=null;
-// per-task edit email sets
-const editSelMap={};
-
-function save(){localStorage.setItem('tasks_v3',JSON.stringify(tasks));}
+function fbDeleteTask(id){
+  if(!fbDb) return;
+  fbRemove(fbRef(fbDb,'tasks/'+id));
+}
 
 // ── TOAST ─────────────────────────────────────────────────────
 function showToast(msg,type=''){
@@ -424,7 +368,7 @@ function startMic(inputId,btn){
   recognition=r;
 }
 
-// ── EMAIL SEND ────────────────────────────────────────────────
+// ── EMAIL ─────────────────────────────────────────────────────
 async function sendMailToList(task,emailList){
   if(!emailList||!emailList.length) return;
   const st=STATUS[task.status]||STATUS.none;
@@ -432,11 +376,9 @@ async function sendMailToList(task,emailList){
   for(const email of emailList){
     try{
       await emailjs.send(EJS_SERVICE,EJS_TEMPLATE,{
-        task_name:task.text,
-        task_status:st.label,
+        task_name:task.text, task_status:st.label,
         task_progress:task.progress||'Aucune note',
-        update_date:new Date().toLocaleString('fr-FR'),
-        to_email:email,
+        update_date:new Date().toLocaleString('fr-FR'), to_email:email,
       });sent++;
     }catch(e){errs++;}
   }
@@ -444,38 +386,99 @@ async function sendMailToList(task,emailList){
   if(errs) showToast(`⚠️ ${errs} erreur(s) d'envoi`,'error');
 }
 
+// ── EMAIL OPTIONS ─────────────────────────────────────────────
+function renderEmailOptions(containerId,selSet,taskId){
+  const container=document.getElementById(containerId);if(!container) return;
+  const valid=contacts.filter(c=>c.email.trim());
+  if(!valid.length){container.innerHTML='<div style="font-size:12px;color:var(--text3);padding:6px 0">Aucun contact — cliquez sur 👥 pour en ajouter.</div>';return;}
+  const allSel=selSet.has('all');
+  let html=`<div class="email-opt all-opt${allSel?' sel':''}" data-eid="all" data-tid="${taskId||'new'}">
+    <div class="eochk"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+    <div class="eoi"><div class="eon">📨 Envoyer à tous</div><div class="eoa">${valid.length} contact(s)</div></div>
+  </div>`;
+  valid.forEach(c=>{
+    const s=selSet.has(c.email)||allSel;
+    html+=`<div class="email-opt${s?' sel':''}" data-eid="${c.email}" data-tid="${taskId||'new'}">
+      <div class="eochk"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+      <div class="eoi"><div class="eon">${c.name}</div><div class="eoa">${c.email}</div></div>
+    </div>`;
+  });
+  container.innerHTML=html;
+  container.querySelectorAll('.email-opt').forEach(opt=>{
+    opt.addEventListener('click',()=>{
+      const eid=opt.dataset.eid;
+      if(eid==='all'){if(selSet.has('all')){selSet.clear();}else{selSet.clear();selSet.add('all');}}
+      else{selSet.delete('all');if(selSet.has(eid))selSet.delete(eid);else selSet.add(eid);}
+      renderEmailOptions(containerId,selSet,taskId);
+    });
+  });
+}
+
+function resolveEmails(selSet){
+  const valid=contacts.filter(c=>c.email.trim());
+  if(selSet.has('all')) return valid.map(c=>c.email);
+  return [...selSet].filter(Boolean);
+}
+
+// ── CONTACTS MODAL ────────────────────────────────────────────
+function renderContactsModal(){
+  const list=document.getElementById('contactsList');
+  list.innerHTML=contacts.map(c=>`
+    <div class="contact-item">
+      <div class="contact-avatar" id="av-${c.id}">${initials(c.name)}</div>
+      <div class="contact-info">
+        <input class="contact-name-inp" data-f="name" data-cid="${c.id}" value="${c.name}" placeholder="Nom"/>
+        <input class="contact-email-inp" data-f="email" data-cid="${c.id}" value="${c.email}" placeholder="adresse@email.com" type="email"/>
+      </div>
+      <button class="contact-del" data-del="${c.id}">
+        <svg viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+      </button>
+    </div>`).join('');
+  list.querySelectorAll('input[data-f]').forEach(inp=>{
+    inp.addEventListener('input',()=>{
+      const c=contacts.find(c=>c.id==inp.dataset.cid);
+      if(c){c[inp.dataset.f]=inp.value;if(inp.dataset.f==='name'){const av=document.getElementById('av-'+c.id);if(av)av.textContent=initials(inp.value);}}
+    });
+  });
+  list.querySelectorAll('[data-del]').forEach(btn=>{
+    btn.addEventListener('click',()=>{contacts=contacts.filter(c=>c.id!=btn.dataset.del);renderContactsModal();});
+  });
+}
+document.getElementById('btnOpenContacts').addEventListener('click',()=>{renderContactsModal();document.getElementById('contactsModal').style.display='flex';});
+document.getElementById('btnCloseContacts').addEventListener('click',()=>{document.getElementById('contactsModal').style.display='none';});
+document.getElementById('contactsModal').addEventListener('click',e=>{if(e.target===document.getElementById('contactsModal'))document.getElementById('contactsModal').style.display='none';});
+document.getElementById('btnAddContact').addEventListener('click',()=>{contacts.push({id:nextCid++,name:'Nouveau contact',email:''});renderContactsModal();});
+document.getElementById('btnSaveContacts').addEventListener('click',()=>{
+  saveContacts();document.getElementById('contactsModal').style.display='none';
+  selEmails.clear();renderEmailOptions('emailOptions',selEmails,'new');
+  showToast('✓ Contacts enregistrés','success');
+});
+
 // ── ADD TASK ──────────────────────────────────────────────────
 function addTask(){
   const text=document.getElementById('newTask').value.trim();
   if(!text){showToast('Veuillez saisir une tâche','error');return;}
   const progress=document.getElementById('newProgress').value.trim();
   const emails=resolveEmails(selEmails);
-  const t={id:nextId++,text,emails,progress,status:newStatus,done:newStatus==='done',date:new Date().toISOString()};
-  tasks.unshift(t);save();
+  const t={id:nextId++,text,emails,progress,status:newStatus,done:newStatus==='done',date:Date.now()};
+  fbSaveTask(t);
   document.getElementById('newTask').value='';
   document.getElementById('newProgress').value='';
   selEmails.clear();setNewStatus('none');
   renderEmailOptions('emailOptions',selEmails,'new');
-  render();showToast('✓ Tâche ajoutée','success');
+  showToast('✓ Tâche ajoutée','success');
   if(emails.length) sendMailToList(t,emails);
 }
 
-// ── CHIPS ─────────────────────────────────────────────────────
 function setNewStatus(s){
   newStatus=s;
-  document.querySelectorAll('#newStatusChips .chip').forEach(c=>{
-    c.className='chip'+(c.dataset.s===s?' '+STATUS[s].chipCls:'');
-  });
+  document.querySelectorAll('#newStatusChips .chip').forEach(c=>{c.className='chip'+(c.dataset.s===s?' '+STATUS[s].chipCls:'');});
 }
 document.querySelectorAll('#newStatusChips .chip').forEach(c=>c.addEventListener('click',()=>setNewStatus(c.dataset.s)));
 
 // ── EDIT ──────────────────────────────────────────────────────
-function startEdit(id){
-  editingId=id;
-  const t=tasks.find(t=>t.id===id);
-  if(t){editSelMap[id]=new Set(t.emails||[]);}
-  render();
-}
+function startEdit(id){editingId=id;const t=tasks.find(t=>t.id===id);if(t){editSelMap[id]=new Set(t.emails||[]);}render();}
+
 function saveEdit(id){
   const t=tasks.find(t=>t.id===id);if(!t) return;
   t.text=document.getElementById('et-'+id).value.trim()||t.text;
@@ -485,24 +488,29 @@ function saveEdit(id){
   const es=editSelMap[id]||new Set();
   t.emails=resolveEmails(es);
   delete editSelMap[id];
-  save();editingId=null;render();
+  fbSaveTask(t);
+  editingId=null;
   showToast('✓ Tâche mise à jour','success');
   if(t.emails&&t.emails.length) sendMailToList(t,t.emails);
 }
+
 function cancelEdit(){editingId=null;render();}
+
 function selectEditChip(id,s){
   document.querySelectorAll(`[data-edit-s="${id}"]`).forEach(c=>{
-    const a=c.dataset.s===s;
-    c.className='chip'+(a?' '+STATUS[s].chipCls+' chip-sel':'');
+    const a=c.dataset.s===s;c.className='chip'+(a?' '+STATUS[s].chipCls+' chip-sel':'');
   });
 }
-function deleteTask(id){tasks=tasks.filter(t=>t.id!==id);if(editingId===id)editingId=null;save();render();showToast('Tâche supprimée');}
+
+function deleteTask(id){fbDeleteTask(id);if(editingId===id)editingId=null;showToast('Tâche supprimée');}
+
 function toggleDone(id){
   const t=tasks.find(t=>t.id===id);if(!t) return;
   t.done=!t.done;if(t.done)t.status='done';
-  save();render();
+  fbSaveTask(t);
   if(t.done&&t.emails&&t.emails.length) sendMailToList(t,t.emails);
 }
+
 function fmtDate(d){return new Date(d).toLocaleDateString('fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});}
 
 // ── RENDER ────────────────────────────────────────────────────
@@ -572,15 +580,13 @@ function render(){
     </div>`;
   }).join('');
 
-  // Render edit email options
   visible.forEach(t=>{
     if(editingId===t.id){
       if(!editSelMap[t.id]) editSelMap[t.id]=new Set(t.emails||[]);
-      renderEmailOptions('editEmailOptions-'+t.id, editSelMap[t.id], t.id);
+      renderEmailOptions('editEmailOptions-'+t.id,editSelMap[t.id],t.id);
     }
   });
 
-  // Mic delegation
   list.querySelectorAll('[data-mic-target]').forEach(btn=>{
     btn.addEventListener('click',()=>startMic(btn.dataset.micTarget,btn));
   });
@@ -599,9 +605,11 @@ document.querySelectorAll('.filter-btn').forEach(btn=>{
   });
 });
 
-// Init
+// ── INIT ─────────────────────────────────────────────────────
 renderEmailOptions('emailOptions',selEmails,'new');
-render();
+
+if(window._fbReady){ initFirebase(); }
+else { window.addEventListener('fbready', initFirebase); }
 </script>
 </body>
 </html>
