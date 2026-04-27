@@ -10,333 +10,185 @@
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
-
   :root {
-    --bg: #F5F3EE;
-    --card: #FFFFFF;
-    --card2: #F9F8F5;
-    --border: #E4E1D8;
-    --border2: #CFCBC0;
-    --text: #1A1916;
-    --text2: #6B6760;
-    --text3: #A8A49C;
-    --accent: #2D5BE3;
-    --accent-light: #EEF2FC;
-    --red: #D84040;
-    --red-light: #FDEAEA;
-    --green: #1A9E6E;
-    --green-light: #E6F6F0;
-    --orange: #D97706;
-    --orange-light: #FEF3E2;
-    --blue: #2563EB;
-    --blue-light: #EFF6FF;
-    --purple: #7C3AED;
-    --purple-light: #F5F3FF;
-    --radius: 14px;
-    --radius-sm: 8px;
-    --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 4px 12px rgba(0,0,0,0.04);
-    --shadow-md: 0 2px 8px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.06);
+    --bg:#D6E8F7; --card:#FFFFFF; --card2:#EEF5FB;
+    --border:#B8D4EA; --border2:#8FBAD9;
+    --text:#0F2A45; --text2:#3A6080; --text3:#7AAAC8;
+    --accent:#1565C0; --accent-light:#E3F0FB;
+    --red:#D84040; --red-light:#FDEAEA;
+    --green:#1A9E6E; --green-light:#E6F6F0;
+    --orange:#D97706; --orange-light:#FEF3E2;
+    --blue:#1565C0; --blue-light:#DDEEFF;
+    --purple:#7C3AED; --purple-light:#F5F3FF;
+    --radius:14px; --radius-sm:8px;
+    --shadow:0 1px 3px rgba(15,42,69,.10),0 4px 12px rgba(15,42,69,.07);
+    --shadow-md:0 2px 8px rgba(15,42,69,.10),0 8px 24px rgba(15,42,69,.08);
   }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    padding-bottom: 40px;
-  }
-
-  .app { max-width: 440px; margin: 0 auto; padding: 0 16px; }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:40px}
+  .app{max-width:440px;margin:0 auto;padding:0 16px}
 
   /* HEADER */
-  .header {
-    padding: 28px 0 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  .header-left h1 {
-    font-size: 26px;
-    font-weight: 600;
-    letter-spacing: -0.5px;
-    color: var(--text);
-  }
-  .header-left p { font-size: 13px; color: var(--text3); margin-top: 2px; }
-  .header-icon {
-    width: 42px; height: 42px;
-    background: var(--text);
-    border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .header-icon svg { width: 20px; height: 20px; stroke: white; }
+  .header{padding:28px 0 20px;display:flex;align-items:center;justify-content:space-between}
+  .header-left h1{font-size:26px;font-weight:600;letter-spacing:-.5px;color:var(--text)}
+  .header-left p{font-size:13px;color:var(--text3);margin-top:2px}
+  .header-right{display:flex;gap:8px}
+  .hbtn{width:42px;height:42px;background:var(--text);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:opacity .15s;border:none}
+  .hbtn:hover{opacity:.85}
+  .hbtn svg{width:20px;height:20px;stroke:white;fill:none;stroke-width:2}
 
   /* STATS */
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(3,1fr);
-    gap: 8px;
-    margin-bottom: 20px;
-  }
-  .stat {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 12px;
-    text-align: center;
-    box-shadow: var(--shadow);
-  }
-  .stat-num { font-size: 24px; font-weight: 600; font-family: 'DM Mono', monospace; color: var(--text); }
-  .stat-label { font-size: 11px; color: var(--text3); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px;text-align:center;box-shadow:var(--shadow)}
+  .stat-num{font-size:24px;font-weight:600;font-family:'DM Mono',monospace;color:var(--text)}
+  .stat-label{font-size:11px;color:var(--text3);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
 
-  /* ADD FORM */
-  .add-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 16px;
-    margin-bottom: 16px;
-    box-shadow: var(--shadow);
-  }
-  .add-card h3 { font-size: 13px; font-weight: 500; color: var(--text2); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
-  .field-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
-  .field-row:last-of-type { margin-bottom: 0; }
-  .field-input {
-    flex: 1;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 10px 12px;
-    font-size: 15px;
-    font-family: 'DM Sans', sans-serif;
-    background: var(--card2);
-    color: var(--text);
-    outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
-  }
-  .field-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(45,91,227,0.1); }
-  .field-input::placeholder { color: var(--text3); }
-  textarea.field-input { resize: none; line-height: 1.5; }
+  /* CARD */
+  .add-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:16px;box-shadow:var(--shadow)}
+  .add-card h3{font-size:13px;font-weight:500;color:var(--text2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px}
+  .field-row{display:flex;gap:8px;align-items:flex-start;margin-bottom:10px}
+  .field-input{flex:1;border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-size:15px;font-family:'DM Sans',sans-serif;background:var(--card2);color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s;width:100%}
+  .field-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(21,101,192,.12)}
+  .field-input::placeholder{color:var(--text3)}
+  textarea.field-input{resize:none;line-height:1.5}
 
-  .email-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
-  .email-row .field-input { font-size: 14px; }
-  .email-label { font-size: 12px; color: var(--text2); white-space: nowrap; }
+  /* EMAIL SELECTOR */
+  .email-selector{margin-bottom:10px}
+  .esec-label{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;display:flex;align-items:center;gap:5px}
+  .esec-label svg{width:12px;height:12px;stroke:var(--text3);fill:none;stroke-width:2}
+  .email-opt{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--card2);cursor:pointer;transition:all .15s;margin-bottom:5px;user-select:none}
+  .email-opt:hover{background:var(--blue-light);border-color:var(--blue)}
+  .email-opt.sel{background:var(--blue-light);border-color:var(--blue)}
+  .email-opt.all-opt{background:var(--accent-light);border-color:var(--accent)}
+  .email-opt.all-opt.sel{background:var(--blue);border-color:var(--blue)}
+  .email-opt.all-opt.sel .eon,.email-opt.all-opt.sel .eoa{color:white}
+  .eochk{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s}
+  .email-opt.sel .eochk{background:var(--blue);border-color:var(--blue)}
+  .email-opt.all-opt.sel .eochk{background:white;border-color:white}
+  .eochk svg{width:10px;height:10px;fill:none;stroke:white;stroke-width:2.5;opacity:0;transition:opacity .1s}
+  .email-opt.sel .eochk svg{opacity:1}
+  .email-opt.all-opt.sel .eochk svg{opacity:1;stroke:var(--blue)}
+  .eoi{flex:1;min-width:0}
+  .eon{font-size:13px;font-weight:500;color:var(--text)}
+  .eoa{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
-  .btn-mic {
-    width: 40px; height: 40px;
-    border-radius: 50%;
-    border: 1px solid var(--border);
-    background: var(--card);
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    transition: all 0.15s;
-    box-shadow: var(--shadow);
-  }
-  .btn-mic:hover { background: var(--card2); border-color: var(--border2); }
-  .btn-mic.active { background: #FFF0F0; border-color: var(--red); animation: pulse 1s infinite; }
-  .btn-mic svg { width: 16px; height: 16px; stroke: var(--text2); }
-  .btn-mic.active svg { stroke: var(--red); }
-  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(216,64,64,0.3)} 50%{box-shadow:0 0 0 6px rgba(216,64,64,0)} }
+  /* MIC */
+  .btn-mic{width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s;box-shadow:var(--shadow)}
+  .btn-mic:hover{background:var(--card2);border-color:var(--border2)}
+  .btn-mic.active{background:#FFF0F0;border-color:var(--red);animation:pulse 1s infinite}
+  .btn-mic svg{width:16px;height:16px;stroke:var(--text2);fill:none;stroke-width:2}
+  .btn-mic.active svg{stroke:var(--red)}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(216,64,64,.3)}50%{box-shadow:0 0 0 6px rgba(216,64,64,0)}}
+  .mic-hint{font-size:11px;color:var(--red);text-align:center;min-height:16px;margin:6px 0 0}
 
-  .mic-hint { font-size: 11px; color: var(--red); text-align: center; min-height: 16px; margin: 6px 0 0; }
+  /* CHIPS */
+  .status-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .chip{padding:5px 11px;border-radius:99px;border:1px solid var(--border);font-size:12px;font-family:'DM Sans',sans-serif;cursor:pointer;background:var(--card2);color:var(--text2);transition:all .15s;font-weight:400}
+  .chip.active-none {background:var(--card2);border-color:var(--border2);color:var(--text);font-weight:500}
+  .chip.active-start{background:var(--blue-light);border-color:var(--blue);color:var(--blue);font-weight:500}
+  .chip.active-mid  {background:var(--orange-light);border-color:var(--orange);color:var(--orange);font-weight:500}
+  .chip.active-end  {background:var(--purple-light);border-color:var(--purple);color:var(--purple);font-weight:500}
+  .chip.active-done {background:var(--green-light);border-color:var(--green);color:var(--green);font-weight:500}
 
-  .status-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
-  .chip {
-    padding: 5px 11px;
-    border-radius: 99px;
-    border: 1px solid var(--border);
-    font-size: 12px;
-    font-family: 'DM Sans', sans-serif;
-    cursor: pointer;
-    background: var(--card2);
-    color: var(--text2);
-    transition: all 0.15s;
-    font-weight: 400;
-  }
-  .chip.active-none  { background: var(--card2); border-color: var(--border2); color: var(--text); font-weight: 500; }
-  .chip.active-start { background: var(--blue-light); border-color: var(--blue); color: var(--blue); font-weight: 500; }
-  .chip.active-mid   { background: var(--orange-light); border-color: var(--orange); color: var(--orange); font-weight: 500; }
-  .chip.active-end   { background: var(--purple-light); border-color: var(--purple); color: var(--purple); font-weight: 500; }
-  .chip.active-done  { background: var(--green-light); border-color: var(--green); color: var(--green); font-weight: 500; }
-
-  .btn-add {
-    width: 100%;
-    padding: 11px;
-    border-radius: var(--radius-sm);
-    border: none;
-    background: var(--text);
-    color: white;
-    font-size: 15px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    cursor: pointer;
-    margin-top: 12px;
-    transition: opacity 0.15s, transform 0.1s;
-    letter-spacing: -0.2px;
-  }
-  .btn-add:active { transform: scale(0.98); opacity: 0.85; }
+  .btn-add{width:100%;padding:11px;border-radius:var(--radius-sm);border:none;background:var(--text);color:white;font-size:15px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;margin-top:12px;transition:opacity .15s,transform .1s}
+  .btn-add:active{transform:scale(.98);opacity:.85}
 
   /* FILTERS */
-  .filters { display: flex; gap: 6px; margin-bottom: 14px; }
-  .filter-btn {
-    flex: 1; padding: 8px 4px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border);
-    background: var(--card);
-    color: var(--text2);
-    font-size: 13px;
-    font-family: 'DM Sans', sans-serif;
-    cursor: pointer;
-    transition: all 0.15s;
-    text-align: center;
-    box-shadow: var(--shadow);
-  }
-  .filter-btn.active {
-    background: var(--text);
-    border-color: var(--text);
-    color: white;
-    font-weight: 500;
-  }
+  .filters{display:flex;gap:6px;margin-bottom:14px}
+  .filter-btn{flex:1;padding:8px 4px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--card);color:var(--text2);font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s;text-align:center;box-shadow:var(--shadow)}
+  .filter-btn.active{background:var(--text);border-color:var(--text);color:white;font-weight:500}
 
-  /* TASK LIST */
-  .task-list { display: flex; flex-direction: column; gap: 10px; }
+  /* TASK */
+  .task-list{display:flex;flex-direction:column;gap:10px}
+  .task-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);animation:fadeIn .2s ease;transition:opacity .2s}
+  .task-card.done{opacity:.6}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+  .task-main{display:flex;align-items:flex-start;gap:10px;padding:14px}
+  .check-btn{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--border2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .15s;background:transparent}
+  .check-btn.checked{background:var(--green);border-color:var(--green)}
+  .check-btn svg{width:11px;height:11px;opacity:0;transition:opacity .1s;fill:none;stroke:white;stroke-width:2.5}
+  .check-btn.checked svg{opacity:1}
+  .task-content{flex:1;min-width:0}
+  .task-title{font-size:15px;font-weight:500;color:var(--text);line-height:1.4;word-break:break-word}
+  .task-card.done .task-title{text-decoration:line-through;color:var(--text3)}
+  .task-email-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;color:var(--text3);background:var(--card2);border:1px solid var(--border);border-radius:99px;padding:2px 8px;margin-top:5px;font-family:'DM Mono',monospace;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .task-email-tag svg{width:10px;height:10px;stroke:var(--text3);fill:none;stroke-width:2;flex-shrink:0}
+  .task-actions{display:flex;gap:4px;flex-shrink:0}
+  .icon-btn{width:30px;height:30px;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+  .icon-btn:hover{background:var(--card2)}
+  .icon-btn.del:hover{background:var(--red-light);border-color:var(--red)}
+  .icon-btn svg{width:14px;height:14px;stroke:var(--text2);fill:none;stroke-width:2}
+  .icon-btn.del:hover svg{stroke:var(--red)}
 
-  .task-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    box-shadow: var(--shadow);
-    animation: fadeIn 0.2s ease;
-    transition: opacity 0.2s;
-  }
-  .task-card.done { opacity: 0.6; }
-  @keyframes fadeIn { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+  /* PROGRESS */
+  .progress-section{border-top:1px solid var(--border);padding:12px 14px;background:var(--card2)}
+  .progress-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .progress-section-label{font-size:11px;font-weight:500;color:var(--text3);text-transform:uppercase;letter-spacing:.5px}
+  .badge{font-size:11px;font-weight:500;padding:3px 9px;border-radius:99px}
+  .badge-none {background:var(--card2);color:var(--text3);border:1px solid var(--border)}
+  .badge-start{background:var(--blue-light);color:var(--blue)}
+  .badge-mid  {background:var(--orange-light);color:var(--orange)}
+  .badge-end  {background:var(--purple-light);color:var(--purple)}
+  .badge-done {background:var(--green-light);color:var(--green)}
+  .progress-note{font-size:13px;color:var(--text2);line-height:1.5;font-style:italic;margin-bottom:8px}
+  .progress-note.empty{color:var(--text3);font-style:normal;font-size:12px}
+  .progress-bar-bg{background:var(--border);border-radius:99px;height:3px;overflow:hidden}
+  .progress-bar-fill{height:3px;border-radius:99px;transition:width .5s ease}
 
-  .task-main { display: flex; align-items: flex-start; gap: 10px; padding: 14px; }
+  /* EDIT */
+  .edit-section{padding:14px;border-top:1px solid var(--border);background:var(--accent-light)}
+  .edit-field-row{display:flex;gap:6px;align-items:flex-start;margin-bottom:8px}
+  .edit-field-row .field-input{font-size:14px}
+  .edit-actions-row{display:flex;gap:6px;justify-content:flex-end;margin-top:10px}
+  .btn-cancel{padding:7px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:white;font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;color:var(--text2)}
+  .btn-save{padding:7px 14px;border-radius:var(--radius-sm);border:none;background:var(--accent);font-size:13px;font-family:'DM Sans',sans-serif;cursor:pointer;color:white;font-weight:500}
 
-  .check-btn {
-    width: 22px; height: 22px;
-    border-radius: 50%;
-    border: 1.5px solid var(--border2);
-    flex-shrink: 0;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    margin-top: 1px;
-    transition: all 0.15s;
-    background: transparent;
-  }
-  .check-btn.checked { background: var(--green); border-color: var(--green); }
-  .check-btn svg { width: 11px; height: 11px; opacity: 0; transition: opacity 0.1s; }
-  .check-btn.checked svg { opacity: 1; }
-
-  .task-content { flex: 1; min-width: 0; }
-  .task-title {
-    font-size: 15px; font-weight: 500; color: var(--text);
-    line-height: 1.4; word-break: break-word;
-  }
-  .task-card.done .task-title { text-decoration: line-through; color: var(--text3); }
-  .task-email-tag {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-size: 11px; color: var(--text3);
-    background: var(--card2);
-    border: 1px solid var(--border);
-    border-radius: 99px;
-    padding: 2px 8px;
-    margin-top: 5px;
-    font-family: 'DM Mono', monospace;
-  }
-  .task-email-tag svg { width: 10px; height: 10px; stroke: var(--text3); flex-shrink:0; }
-
-  .task-actions { display: flex; gap: 4px; flex-shrink: 0; }
-  .icon-btn {
-    width: 30px; height: 30px;
-    border-radius: var(--radius-sm);
-    border: 1px solid var(--border);
-    background: transparent;
-    cursor: pointer;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.15s;
-  }
-  .icon-btn:hover { background: var(--card2); }
-  .icon-btn.del:hover { background: var(--red-light); border-color: var(--red); }
-  .icon-btn svg { width: 14px; height: 14px; stroke: var(--text2); }
-  .icon-btn.del:hover svg { stroke: var(--red); }
-
-  /* PROGRESS SECTION */
-  .progress-section {
-    border-top: 1px solid var(--border);
-    padding: 12px 14px;
-    background: var(--card2);
-  }
-  .progress-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-  .progress-section-label { font-size: 11px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
-
-  .badge {
-    font-size: 11px; font-weight: 500;
-    padding: 3px 9px; border-radius: 99px;
-  }
-  .badge-none   { background: var(--card2); color: var(--text3); border: 1px solid var(--border); }
-  .badge-start  { background: var(--blue-light); color: var(--blue); }
-  .badge-mid    { background: var(--orange-light); color: var(--orange); }
-  .badge-end    { background: var(--purple-light); color: var(--purple); }
-  .badge-done   { background: var(--green-light); color: var(--green); }
-
-  .progress-note { font-size: 13px; color: var(--text2); line-height: 1.5; font-style: italic; margin-bottom: 8px; }
-  .progress-note.empty { color: var(--text3); font-style: normal; font-size: 12px; }
-
-  .progress-bar-bg { background: var(--border); border-radius: 99px; height: 3px; overflow: hidden; }
-  .progress-bar-fill { height: 3px; border-radius: 99px; transition: width 0.5s ease; }
-
-  /* EDIT MODE */
-  .edit-section { padding: 14px; border-top: 1px solid var(--border); background: var(--accent-light); }
-  .edit-field-row { display: flex; gap: 6px; align-items: flex-start; margin-bottom: 8px; }
-  .edit-field-row .field-input { font-size: 14px; }
-  .edit-actions-row { display: flex; gap: 6px; justify-content: flex-end; margin-top: 10px; }
-  .btn-cancel {
-    padding: 7px 14px; border-radius: var(--radius-sm);
-    border: 1px solid var(--border); background: white;
-    font-size: 13px; font-family: 'DM Sans',sans-serif;
-    cursor: pointer; color: var(--text2);
-  }
-  .btn-save {
-    padding: 7px 14px; border-radius: var(--radius-sm);
-    border: none; background: var(--accent);
-    font-size: 13px; font-family: 'DM Sans',sans-serif;
-    cursor: pointer; color: white; font-weight: 500;
-  }
+  /* CONTACTS MODAL */
+  .modal-overlay{position:fixed;inset:0;background:rgba(15,42,69,.45);z-index:100;display:flex;align-items:flex-end;justify-content:center;animation:fadeOv .2s}
+  @keyframes fadeOv{from{opacity:0}to{opacity:1}}
+  .modal{background:var(--card);border-radius:var(--radius) var(--radius) 0 0;width:100%;max-width:440px;padding:20px 16px 40px;animation:slideUp .25s ease;max-height:90vh;overflow-y:auto}
+  @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+  .modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+  .modal-title{font-size:17px;font-weight:600;color:var(--text)}
+  .modal-close{width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--card2);cursor:pointer;display:flex;align-items:center;justify-content:center}
+  .modal-close svg{width:14px;height:14px;stroke:var(--text2);fill:none;stroke-width:2}
+  .contact-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);margin-bottom:8px;background:var(--card2)}
+  .contact-avatar{width:36px;height:36px;border-radius:50%;background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;color:var(--blue);flex-shrink:0}
+  .contact-info{flex:1;min-width:0}
+  .contact-name-inp{width:100%;border:none;background:transparent;font-size:14px;font-weight:500;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;padding:0}
+  .contact-email-inp{width:100%;border:none;background:transparent;font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;outline:none;padding:0;margin-top:2px}
+  .contact-name-inp:focus,.contact-email-inp:focus{color:var(--accent)}
+  .contact-del{width:26px;height:26px;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+  .contact-del:hover{background:var(--red-light);border-color:var(--red)}
+  .contact-del svg{width:12px;height:12px;stroke:var(--text3);fill:none;stroke-width:2}
+  .contact-del:hover svg{stroke:var(--red)}
+  .btn-add-contact{width:100%;padding:10px;border-radius:var(--radius-sm);border:1px dashed var(--border2);background:transparent;color:var(--text2);font-size:14px;font-family:'DM Sans',sans-serif;cursor:pointer;transition:all .15s;margin-top:4px}
+  .btn-add-contact:hover{background:var(--card2)}
+  .btn-save-contacts{width:100%;padding:11px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:white;font-size:15px;font-family:'DM Sans',sans-serif;font-weight:500;cursor:pointer;margin-top:14px}
 
   /* TOAST */
-  .toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
-    background: var(--text); color: white;
-    padding: 10px 20px; border-radius: 99px;
-    font-size: 13px; font-weight: 500;
-    box-shadow: var(--shadow-md);
-    transition: transform 0.3s ease, opacity 0.3s;
-    opacity: 0; pointer-events: none; white-space: nowrap; z-index: 999;
-  }
-  .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-  .toast.success { background: var(--green); }
-  .toast.error { background: var(--red); }
-
-  .empty-state { text-align: center; padding: 40px 16px; color: var(--text3); font-size: 14px; }
-  .empty-state svg { width: 40px; height: 40px; stroke: var(--border2); margin-bottom: 12px; }
-
-  .divider { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin: 4px 0 10px; padding-left: 2px; }
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--text);color:white;padding:10px 20px;border-radius:99px;font-size:13px;font-weight:500;box-shadow:var(--shadow-md);transition:transform .3s ease,opacity .3s;opacity:0;pointer-events:none;white-space:nowrap;z-index:999}
+  .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+  .toast.success{background:var(--green)}
+  .toast.error{background:var(--red)}
+  .empty-state{text-align:center;padding:40px 16px;color:var(--text3);font-size:14px}
+  .empty-state svg{width:40px;height:40px;stroke:var(--border2);display:block;margin:0 auto 12px}
 </style>
 </head>
 <body>
 <div class="app">
-
   <div class="header">
     <div class="header-left">
       <h1>Mes tâches</h1>
       <p>Parlez ou tapez pour gérer vos tâches</p>
     </div>
-    <div class="header-icon">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+    <div class="header-right">
+      <button class="hbtn" id="btnOpenContacts" title="Gérer les contacts">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      </button>
+      <button class="hbtn">
+        <svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      </button>
     </div>
   </div>
 
@@ -348,26 +200,25 @@
 
   <div class="add-card">
     <h3>Nouvelle tâche</h3>
-
     <div class="field-row">
       <input type="text" id="newTask" class="field-input" placeholder="Nom de la tâche..." />
-      <button class="btn-mic" id="micTask" title="Dicter la tâche">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0014 0M12 19v3M8 22h8"/></svg>
+      <button class="btn-mic" id="micTask">
+        <svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0014 0M12 19v3M8 22h8"/></svg>
       </button>
     </div>
-
-    <div class="email-row">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
-      <input type="email" id="newEmail" class="field-input" placeholder="Email du responsable (optionnel)" />
+    <div class="email-selector">
+      <div class="esec-label">
+        <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+        Destinataire(s)
+      </div>
+      <div id="emailOptions"></div>
     </div>
-
     <div class="field-row">
       <textarea id="newProgress" class="field-input" rows="2" placeholder="État d'avancement (optionnel)..."></textarea>
-      <button class="btn-mic" id="micProgress" title="Dicter l'avancement">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0014 0M12 19v3M8 22h8"/></svg>
+      <button class="btn-mic" id="micProgress">
+        <svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0014 0M12 19v3M8 22h8"/></svg>
       </button>
     </div>
-
     <div class="status-chips" id="newStatusChips">
       <span class="chip active-none" data-s="none">Non commencé</span>
       <span class="chip" data-s="start">Démarré</span>
@@ -375,7 +226,6 @@
       <span class="chip" data-s="end">Presque fini</span>
       <span class="chip" data-s="done">Terminé</span>
     </div>
-
     <div class="mic-hint" id="micHint"></div>
     <button class="btn-add" id="addBtn">+ Ajouter la tâche</button>
   </div>
@@ -385,243 +235,331 @@
     <button class="filter-btn" data-filter="todo">À faire</button>
     <button class="filter-btn" data-filter="done">Terminées</button>
   </div>
-
   <div class="task-list" id="taskList"></div>
+</div>
+
+<!-- MODAL CONTACTS -->
+<div class="modal-overlay" id="contactsModal" style="display:none">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">👥 Gérer les contacts</span>
+      <button class="modal-close" id="btnCloseContacts">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div id="contactsList"></div>
+    <button class="btn-add-contact" id="btnAddContact">+ Ajouter un contact</button>
+    <button class="btn-save-contacts" id="btnSaveContacts">💾 Enregistrer les contacts</button>
+  </div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ─── EMAILJS CONFIG ──────────────────────────────────────────
 emailjs.init('HWFRZJI6wntv53fYS');
-const EJS_SERVICE  = 'service_zkm7ii9';
-const EJS_TEMPLATE = 'template_qbu1l7l';
+const EJS_SERVICE='service_zkm7ii9', EJS_TEMPLATE='template_qbu1l7l';
 
-// ─── STATUS CONFIG ───────────────────────────────────────────
-const STATUS = {
-  none:  { label:'Non commencé', badgeCls:'badge-none',  chipCls:'active-none',  bar:'#D1CFC8', pct:0   },
-  start: { label:'Démarré',      badgeCls:'badge-start', chipCls:'active-start', bar:'#2563EB', pct:25  },
-  mid:   { label:'En cours',     badgeCls:'badge-mid',   chipCls:'active-mid',   bar:'#D97706', pct:55  },
-  end:   { label:'Presque fini', badgeCls:'badge-end',   chipCls:'active-end',   bar:'#7C3AED', pct:80  },
-  done:  { label:'Terminé',      badgeCls:'badge-done',  chipCls:'active-done',  bar:'#1A9E6E', pct:100 },
+const STATUS={
+  none: {label:'Non commencé',badgeCls:'badge-none', chipCls:'active-none', bar:'#D1CFC8',pct:0},
+  start:{label:'Démarré',     badgeCls:'badge-start',chipCls:'active-start',bar:'#2563EB',pct:25},
+  mid:  {label:'En cours',    badgeCls:'badge-mid',  chipCls:'active-mid',  bar:'#D97706',pct:55},
+  end:  {label:'Presque fini',badgeCls:'badge-end',  chipCls:'active-end',  bar:'#7C3AED',pct:80},
+  done: {label:'Terminé',     badgeCls:'badge-done', chipCls:'active-done', bar:'#1A9E6E',pct:100},
 };
 
-// ─── STATE ───────────────────────────────────────────────────
-let tasks = JSON.parse(localStorage.getItem('tasks_v2') || '[]');
-if (!tasks.length) {
-  tasks = [
-    { id:1, text:'Appeler le médecin', email:'', progress:'Rendez-vous à fixer', status:'start', done:false, date: new Date().toISOString() },
-    { id:2, text:'Préparer la réunion', email:'', progress:'Slides terminés', status:'done', done:true, date: new Date().toISOString() },
-  ];
+// ── CONTACTS ──────────────────────────────────────────────────
+let contacts=JSON.parse(localStorage.getItem('contacts_v1')||'null')||[
+  {id:1,name:'Contact 1',email:''},
+  {id:2,name:'Contact 2',email:''},
+  {id:3,name:'Contact 3',email:''},
+  {id:4,name:'Contact 4',email:''},
+  {id:5,name:'Contact 5',email:''},
+  {id:6,name:'Contact 6',email:''},
+  {id:7,name:'Contact 7',email:''},
+];
+let nextCid=contacts.reduce((m,c)=>Math.max(m,c.id),0)+1;
+function saveContacts(){localStorage.setItem('contacts_v1',JSON.stringify(contacts));}
+function initials(n){return n.split(' ').map(w=>w[0]||'').join('').toUpperCase().slice(0,2)||'?';}
+
+// ── SELECTED EMAILS (new task) ────────────────────────────────
+let selEmails=new Set();
+
+function renderEmailOptions(containerId, selSet, taskId){
+  const container=document.getElementById(containerId);
+  if(!container) return;
+  const valid=contacts.filter(c=>c.email.trim());
+  if(!valid.length){
+    container.innerHTML='<div style="font-size:12px;color:var(--text3);padding:6px 0">Aucun contact — cliquez sur 👥 pour en ajouter.</div>';
+    return;
+  }
+  const allSel=selSet.has('all');
+  let html=`<div class="email-opt all-opt${allSel?' sel':''}" data-eid="all" data-tid="${taskId||'new'}">
+    <div class="eochk"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+    <div class="eoi"><div class="eon">📨 Envoyer à tous</div><div class="eoa">${valid.length} contact(s)</div></div>
+  </div>`;
+  valid.forEach(c=>{
+    const s=selSet.has(c.email)||allSel;
+    html+=`<div class="email-opt${s?' sel':''}" data-eid="${c.email}" data-tid="${taskId||'new'}">
+      <div class="eochk"><svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg></div>
+      <div class="eoi"><div class="eon">${c.name}</div><div class="eoa">${c.email}</div></div>
+    </div>`;
+  });
+  container.innerHTML=html;
+  container.querySelectorAll('.email-opt').forEach(opt=>{
+    opt.addEventListener('click',()=>{
+      const eid=opt.dataset.eid;
+      if(eid==='all'){
+        if(selSet.has('all')){selSet.clear();}else{selSet.clear();selSet.add('all');}
+      } else {
+        selSet.delete('all');
+        if(selSet.has(eid)) selSet.delete(eid); else selSet.add(eid);
+      }
+      renderEmailOptions(containerId,selSet,taskId);
+    });
+  });
 }
-let nextId = (tasks.reduce((m,t)=>Math.max(m,t.id),0))+1;
-let filter = 'all';
-let editingId = null;
-let newStatus = 'none';
-let recognition = null;
 
-function save() { localStorage.setItem('tasks_v2', JSON.stringify(tasks)); }
-
-// ─── TOAST ───────────────────────────────────────────────────
-function showToast(msg, type='') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show' + (type ? ' '+type : '');
-  setTimeout(()=>{ t.className='toast'; }, 3000);
+function resolveEmails(selSet){
+  const valid=contacts.filter(c=>c.email.trim());
+  if(selSet.has('all')) return valid.map(c=>c.email);
+  return [...selSet].filter(Boolean);
 }
 
-// ─── SPEECH ──────────────────────────────────────────────────
-const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-function startMic(inputId, btn, onFinal) {
-  if (!SR) { showToast('Dictée non supportée — utilisez Chrome','error'); return; }
-  if (recognition) { recognition.stop(); recognition=null; }
+// ── CONTACTS MODAL ────────────────────────────────────────────
+function renderContactsModal(){
+  const list=document.getElementById('contactsList');
+  list.innerHTML=contacts.map(c=>`
+    <div class="contact-item" data-cid="${c.id}">
+      <div class="contact-avatar" id="av-${c.id}">${initials(c.name)}</div>
+      <div class="contact-info">
+        <input class="contact-name-inp" data-f="name" data-cid="${c.id}" value="${c.name}" placeholder="Nom"/>
+        <input class="contact-email-inp" data-f="email" data-cid="${c.id}" value="${c.email}" placeholder="adresse@email.com" type="email"/>
+      </div>
+      <button class="contact-del" data-del="${c.id}">
+        <svg viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6"/></svg>
+      </button>
+    </div>`).join('');
+  list.querySelectorAll('input[data-f]').forEach(inp=>{
+    inp.addEventListener('input',()=>{
+      const c=contacts.find(c=>c.id==inp.dataset.cid);
+      if(c){
+        c[inp.dataset.f]=inp.value;
+        if(inp.dataset.f==='name'){const av=document.getElementById('av-'+c.id);if(av) av.textContent=initials(inp.value);}
+      }
+    });
+  });
+  list.querySelectorAll('[data-del]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      contacts=contacts.filter(c=>c.id!=btn.dataset.del);
+      renderContactsModal();
+    });
+  });
+}
+document.getElementById('btnOpenContacts').addEventListener('click',()=>{
+  renderContactsModal();
+  document.getElementById('contactsModal').style.display='flex';
+});
+document.getElementById('btnCloseContacts').addEventListener('click',()=>{
+  document.getElementById('contactsModal').style.display='none';
+});
+document.getElementById('contactsModal').addEventListener('click',e=>{
+  if(e.target===document.getElementById('contactsModal'))
+    document.getElementById('contactsModal').style.display='none';
+});
+document.getElementById('btnAddContact').addEventListener('click',()=>{
+  contacts.push({id:nextCid++,name:'Nouveau contact',email:''});
+  renderContactsModal();
+});
+document.getElementById('btnSaveContacts').addEventListener('click',()=>{
+  saveContacts();
+  document.getElementById('contactsModal').style.display='none';
+  selEmails.clear();
+  renderEmailOptions('emailOptions',selEmails,'new');
+  render();
+  showToast('✓ Contacts enregistrés','success');
+});
+
+// ── STATE ─────────────────────────────────────────────────────
+let tasks=JSON.parse(localStorage.getItem('tasks_v3')||'[]');
+if(!tasks.length) tasks=[
+  {id:1,text:'Appeler le médecin',emails:[],progress:'Rendez-vous à fixer',status:'start',done:false,date:new Date().toISOString()},
+  {id:2,text:'Préparer la réunion',emails:[],progress:'Slides terminés',status:'done',done:true,date:new Date().toISOString()},
+];
+let nextId=tasks.reduce((m,t)=>Math.max(m,t.id),0)+1;
+let filter='all',editingId=null,newStatus='none',recognition=null;
+// per-task edit email sets
+const editSelMap={};
+
+function save(){localStorage.setItem('tasks_v3',JSON.stringify(tasks));}
+
+// ── TOAST ─────────────────────────────────────────────────────
+function showToast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast show'+(type?' '+type:'');
+  setTimeout(()=>{t.className='toast';},3200);
+}
+
+// ── SPEECH ────────────────────────────────────────────────────
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+function startMic(inputId,btn){
+  if(!SR){showToast('Dictée non supportée — utilisez Chrome','error');return;}
+  if(recognition){recognition.stop();recognition=null;}
   document.querySelectorAll('.btn-mic').forEach(b=>b.classList.remove('active'));
-  const r = new SR();
-  r.lang='fr-FR'; r.continuous=false; r.interimResults=true;
-  r.onresult = e => {
-    let t=''; for(let i=e.resultIndex;i<e.results.length;i++) t+=e.results[i][0].transcript;
-    const el = document.getElementById(inputId);
-    if (el) el.value = t;
-    if (e.results[e.results.length-1].isFinal) {
+  const tid=inputId;
+  const r=new SR();r.lang='fr-FR';r.continuous=false;r.interimResults=true;
+  r.onresult=e=>{
+    let t='';for(let i=e.resultIndex;i<e.results.length;i++) t+=e.results[i][0].transcript;
+    const el=document.getElementById(tid);
+    if(el){el.value=t;el.dispatchEvent(new Event('input',{bubbles:true}));}
+    if(e.results[e.results.length-1].isFinal){
       btn.classList.remove('active');
-      document.getElementById('micHint').textContent='';
+      const h=document.getElementById('micHint');if(h)h.textContent='';
       recognition=null;
-      if (onFinal) onFinal(t);
     }
   };
-  r.onend = () => { btn.classList.remove('active'); document.getElementById('micHint').textContent=''; recognition=null; };
-  r.onerror = () => { btn.classList.remove('active'); document.getElementById('micHint').textContent=''; recognition=null; };
-  r.start();
-  btn.classList.add('active');
-  document.getElementById('micHint').textContent='🎤 Écoute en cours... parlez maintenant';
+  const stop=()=>{btn.classList.remove('active');const h=document.getElementById('micHint');if(h)h.textContent='';recognition=null;};
+  r.onend=stop;r.onerror=stop;
+  r.start();btn.classList.add('active');
+  const h=document.getElementById('micHint');if(h)h.textContent='🎤 Écoute en cours... parlez maintenant';
   recognition=r;
 }
 
-// ─── EMAILJS SEND ─────────────────────────────────────────────
-async function sendMail(task, changeType) {
-  if (!task.email) return;
-  const st = STATUS[task.status]||STATUS.none;
-  try {
-    await emailjs.send(EJS_SERVICE, EJS_TEMPLATE, {
-      task_name:    task.text,
-      task_status:  st.label,
-      task_progress: task.progress || 'Aucune note',
-      update_date:  new Date().toLocaleString('fr-FR'),
-      to_email:     task.email,
-    });
-    showToast('📧 Notification envoyée', 'success');
-  } catch(e) {
-    showToast('Erreur envoi mail: ' + (e.text||e.message||''), 'error');
+// ── EMAIL SEND ────────────────────────────────────────────────
+async function sendMailToList(task,emailList){
+  if(!emailList||!emailList.length) return;
+  const st=STATUS[task.status]||STATUS.none;
+  let sent=0,errs=0;
+  for(const email of emailList){
+    try{
+      await emailjs.send(EJS_SERVICE,EJS_TEMPLATE,{
+        task_name:task.text,
+        task_status:st.label,
+        task_progress:task.progress||'Aucune note',
+        update_date:new Date().toLocaleString('fr-FR'),
+        to_email:email,
+      });sent++;
+    }catch(e){errs++;}
   }
+  if(sent) showToast(`📧 ${sent} mail(s) envoyé(s)`,'success');
+  if(errs) showToast(`⚠️ ${errs} erreur(s) d'envoi`,'error');
 }
 
-// ─── ADD TASK ────────────────────────────────────────────────
-function addTask() {
-  const text = document.getElementById('newTask').value.trim();
-  if (!text) { showToast('Veuillez saisir une tâche','error'); return; }
-  const email    = document.getElementById('newEmail').value.trim();
-  const progress = document.getElementById('newProgress').value.trim();
-  const t = { id:nextId++, text, email, progress, status:newStatus, done:newStatus==='done', date:new Date().toISOString() };
-  tasks.unshift(t);
-  save();
+// ── ADD TASK ──────────────────────────────────────────────────
+function addTask(){
+  const text=document.getElementById('newTask').value.trim();
+  if(!text){showToast('Veuillez saisir une tâche','error');return;}
+  const progress=document.getElementById('newProgress').value.trim();
+  const emails=resolveEmails(selEmails);
+  const t={id:nextId++,text,emails,progress,status:newStatus,done:newStatus==='done',date:new Date().toISOString()};
+  tasks.unshift(t);save();
   document.getElementById('newTask').value='';
-  document.getElementById('newEmail').value='';
   document.getElementById('newProgress').value='';
-  setNewStatus('none');
+  selEmails.clear();setNewStatus('none');
+  renderEmailOptions('emailOptions',selEmails,'new');
+  render();showToast('✓ Tâche ajoutée','success');
+  if(emails.length) sendMailToList(t,emails);
+}
+
+// ── CHIPS ─────────────────────────────────────────────────────
+function setNewStatus(s){
+  newStatus=s;
+  document.querySelectorAll('#newStatusChips .chip').forEach(c=>{
+    c.className='chip'+(c.dataset.s===s?' '+STATUS[s].chipCls:'');
+  });
+}
+document.querySelectorAll('#newStatusChips .chip').forEach(c=>c.addEventListener('click',()=>setNewStatus(c.dataset.s)));
+
+// ── EDIT ──────────────────────────────────────────────────────
+function startEdit(id){
+  editingId=id;
+  const t=tasks.find(t=>t.id===id);
+  if(t){editSelMap[id]=new Set(t.emails||[]);}
   render();
-  showToast('✓ Tâche ajoutée', 'success');
-  if (email) sendMail(t, 'Nouvelle tâche créée');
 }
-
-// ─── STATUS CHIPS (new) ───────────────────────────────────────
-function setNewStatus(s) {
-  newStatus = s;
-  document.querySelectorAll('#newStatusChips .chip').forEach(c => {
-    c.className = 'chip' + (c.dataset.s===s ? ' '+STATUS[s].chipCls : '');
+function saveEdit(id){
+  const t=tasks.find(t=>t.id===id);if(!t) return;
+  t.text=document.getElementById('et-'+id).value.trim()||t.text;
+  t.progress=document.getElementById('ep-'+id).value.trim();
+  const sel=document.querySelector(`[data-edit-s="${id}"].chip-sel`);
+  if(sel){t.status=sel.dataset.s;t.done=t.status==='done';}
+  const es=editSelMap[id]||new Set();
+  t.emails=resolveEmails(es);
+  delete editSelMap[id];
+  save();editingId=null;render();
+  showToast('✓ Tâche mise à jour','success');
+  if(t.emails&&t.emails.length) sendMailToList(t,t.emails);
+}
+function cancelEdit(){editingId=null;render();}
+function selectEditChip(id,s){
+  document.querySelectorAll(`[data-edit-s="${id}"]`).forEach(c=>{
+    const a=c.dataset.s===s;
+    c.className='chip'+(a?' '+STATUS[s].chipCls+' chip-sel':'');
   });
 }
-document.querySelectorAll('#newStatusChips .chip').forEach(c => {
-  c.addEventListener('click', ()=>setNewStatus(c.dataset.s));
-});
-
-// ─── EDIT TASK ───────────────────────────────────────────────
-function startEdit(id) { editingId=id; render(); }
-
-function saveEdit(id) {
-  const t = tasks.find(t=>t.id===id);
-  if (!t) return;
-  const prevStatus = t.status;
-  t.text     = document.getElementById(`et-${id}`).value.trim() || t.text;
-  t.email    = document.getElementById(`ee-${id}`).value.trim();
-  t.progress = document.getElementById(`ep-${id}`).value.trim();
-  const sel  = document.querySelector(`[data-edit-s="${id}"].chip-sel`);
-  if (sel) { t.status = sel.dataset.s; t.done = t.status==='done'; }
-  save(); editingId=null; render();
-  showToast('✓ Tâche mise à jour', 'success');
-  if (t.email) sendMail(t, 'Tâche mise à jour');
+function deleteTask(id){tasks=tasks.filter(t=>t.id!==id);if(editingId===id)editingId=null;save();render();showToast('Tâche supprimée');}
+function toggleDone(id){
+  const t=tasks.find(t=>t.id===id);if(!t) return;
+  t.done=!t.done;if(t.done)t.status='done';
+  save();render();
+  if(t.done&&t.emails&&t.emails.length) sendMailToList(t,t.emails);
 }
+function fmtDate(d){return new Date(d).toLocaleDateString('fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});}
 
-function cancelEdit() { editingId=null; render(); }
-
-function selectEditChip(id, s) {
-  document.querySelectorAll(`[data-edit-s="${id}"]`).forEach(c => {
-    c.className = 'chip chip-sel-' + s + (c.dataset.s===s?' chip-sel':'');
-    if (c.dataset.s===s) c.classList.add('chip-sel');
-  });
-  // recolor active
-  document.querySelectorAll(`[data-edit-s="${id}"]`).forEach(c => {
-    const active = c.dataset.s===s;
-    c.className = 'chip' + (active ? ' '+STATUS[s].chipCls+' chip-sel' : '');
-  });
-}
-
-function deleteTask(id) {
-  tasks = tasks.filter(t=>t.id!==id);
-  if (editingId===id) editingId=null;
-  save(); render();
-  showToast('Tâche supprimée');
-}
-
-function toggleDone(id) {
-  const t = tasks.find(t=>t.id===id);
-  if (!t) return;
-  t.done = !t.done;
-  if (t.done) t.status='done';
-  save(); render();
-  if (t.done && t.email) sendMail(t, 'Tâche marquée terminée');
-}
-
-function fmtDate(d) {
-  return new Date(d).toLocaleDateString('fr-FR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'});
-}
-
-// ─── RENDER ───────────────────────────────────────────────────
-function render() {
-  let visible = tasks;
-  if (filter==='todo') visible = tasks.filter(t=>!t.done);
-  if (filter==='done') visible = tasks.filter(t=>t.done);
-
-  const total=tasks.length, done=tasks.filter(t=>t.done).length;
+// ── RENDER ────────────────────────────────────────────────────
+function render(){
+  let visible=tasks;
+  if(filter==='todo') visible=tasks.filter(t=>!t.done);
+  if(filter==='done') visible=tasks.filter(t=>t.done);
+  const total=tasks.length,done=tasks.filter(t=>t.done).length;
   document.getElementById('statTotal').textContent=total;
   document.getElementById('statTodo').textContent=total-done;
   document.getElementById('statDone').textContent=done;
 
   const list=document.getElementById('taskList');
-  if (!visible.length) {
-    list.innerHTML=`<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg><p>Aucune tâche ici</p></div>`;
+  if(!visible.length){
+    list.innerHTML='<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg><p>Aucune tâche ici</p></div>';
     return;
   }
 
-  list.innerHTML = visible.map(t => {
-    const st = STATUS[t.status]||STATUS.none;
-    const isEdit = editingId===t.id;
+  list.innerHTML=visible.map(t=>{
+    const st=STATUS[t.status]||STATUS.none;
+    const isEdit=editingId===t.id;
+    const eml=t.emails&&t.emails.length?(t.emails.length===1?t.emails[0]:`${t.emails.length} destinataires`):'';
     return `<div class="task-card${t.done?' done':''}">
       <div class="task-main">
         <div class="check-btn${t.done?' checked':''}" onclick="toggleDone(${t.id})">
-          <svg viewBox="0 0 12 12" fill="none" stroke="white" stroke-width="2.5"><polyline points="2,6 5,9 10,3"/></svg>
+          <svg viewBox="0 0 12 12"><polyline points="2,6 5,9 10,3"/></svg>
         </div>
         <div class="task-content">
           <div class="task-title">${t.text}</div>
-          ${t.email ? `<div class="task-email-tag"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>${t.email}</div>` : ''}
+          ${eml?`<div class="task-email-tag"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>${eml}</div>`:''}
         </div>
         <div class="task-actions">
-          <button class="icon-btn" onclick="startEdit(${t.id})" title="Modifier">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          </button>
-          <button class="icon-btn del" onclick="deleteTask(${t.id})" title="Supprimer">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
-          </button>
+          <button class="icon-btn" onclick="startEdit(${t.id})"><svg viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>
+          <button class="icon-btn del" onclick="deleteTask(${t.id})"><svg viewBox="0 0 24 24"><polyline points="3,6 5,6 21,6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg></button>
         </div>
       </div>
-
       <div class="progress-section">
         <div class="progress-top">
           <span class="progress-section-label">Avancement</span>
           <span class="badge ${st.badgeCls}">${st.label}</span>
         </div>
-        ${t.progress
-          ? `<div class="progress-note">${t.progress}</div>`
-          : `<div class="progress-note empty">Aucune note d'avancement</div>`}
+        ${t.progress?`<div class="progress-note">${t.progress}</div>`:`<div class="progress-note empty">Aucune note d'avancement</div>`}
         <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${st.pct}%;background:${st.bar}"></div></div>
       </div>
-
-      ${isEdit ? `
+      ${isEdit?`
       <div class="edit-section">
         <div class="edit-field-row">
-          <input type="text" id="et-${t.id}" class="field-input" value="${t.text.replace(/"/g,'&quot;')}" placeholder="Tâche..." />
-          <button class="btn-mic" onclick="startMic('et-${t.id}',this)" title="Dicter">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0014 0M12 19v3M8 22h8"/></svg>
-          </button>
+          <input type="text" id="et-${t.id}" class="field-input" value="${t.text.replace(/"/g,'&quot;')}" placeholder="Tâche..."/>
+          <button class="btn-mic" data-mic-target="et-${t.id}"><svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0014 0M12 19v3M8 22h8"/></svg></button>
+        </div>
+        <div class="email-selector" style="margin-bottom:10px">
+          <div class="esec-label"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>Destinataire(s)</div>
+          <div id="editEmailOptions-${t.id}"></div>
         </div>
         <div class="edit-field-row">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="2" style="flex-shrink:0;margin-top:12px"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
-          <input type="email" id="ee-${t.id}" class="field-input" value="${t.email||''}" placeholder="Email responsable..." />
-        </div>
-        <div class="edit-field-row">
-          <textarea id="ep-${t.id}" class="field-input" rows="2" placeholder="État d'avancement...">${t.progress||''}</textarea>
-          <button class="btn-mic" onclick="startMic('ep-${t.id}',this)" title="Dicter l'avancement">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0014 0M12 19v3M8 22h8"/></svg>
-          </button>
+          <textarea id="ep-${t.id}" class="field-input" rows="3" placeholder="État d'avancement...">${t.progress||''}</textarea>
+          <button class="btn-mic" data-mic-target="ep-${t.id}"><svg viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0014 0M12 19v3M8 22h8"/></svg></button>
         </div>
         <div class="status-chips">
           ${Object.entries(STATUS).map(([k,v])=>`<span class="chip${t.status===k?' '+v.chipCls+' chip-sel':''}" data-s="${k}" data-edit-s="${t.id}" onclick="selectEditChip(${t.id},'${k}')">${v.label}</span>`).join('')}
@@ -630,27 +568,39 @@ function render() {
           <button class="btn-cancel" onclick="cancelEdit()">Annuler</button>
           <button class="btn-save" onclick="saveEdit(${t.id})">💾 Enregistrer & notifier</button>
         </div>
-      </div>` : ''}
+      </div>`:''}
     </div>`;
   }).join('');
+
+  // Render edit email options
+  visible.forEach(t=>{
+    if(editingId===t.id){
+      if(!editSelMap[t.id]) editSelMap[t.id]=new Set(t.emails||[]);
+      renderEmailOptions('editEmailOptions-'+t.id, editSelMap[t.id], t.id);
+    }
+  });
+
+  // Mic delegation
+  list.querySelectorAll('[data-mic-target]').forEach(btn=>{
+    btn.addEventListener('click',()=>startMic(btn.dataset.micTarget,btn));
+  });
 }
 
-// ─── EVENTS ──────────────────────────────────────────────────
-document.getElementById('addBtn').addEventListener('click', addTask);
-document.getElementById('newTask').addEventListener('keydown', e=>{ if(e.key==='Enter') addTask(); });
-
-document.getElementById('micTask').addEventListener('click', function(){ startMic('newTask', this); });
-document.getElementById('micProgress').addEventListener('click', function(){ startMic('newProgress', this); });
-
-document.querySelectorAll('.filter-btn').forEach(btn => {
-  btn.addEventListener('click', ()=>{
+// ── EVENTS ───────────────────────────────────────────────────
+document.getElementById('addBtn').addEventListener('click',addTask);
+document.getElementById('newTask').addEventListener('keydown',e=>{if(e.key==='Enter')addTask();});
+document.getElementById('micTask').addEventListener('click',function(){startMic('newTask',this);});
+document.getElementById('micProgress').addEventListener('click',function(){startMic('newProgress',this);});
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
     filter=btn.dataset.filter;
     document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    render();
+    btn.classList.add('active');render();
   });
 });
 
+// Init
+renderEmailOptions('emailOptions',selEmails,'new');
 render();
 </script>
 </body>
